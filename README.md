@@ -4,8 +4,11 @@ This repo turns Sentinel‑2 scenes into a simple **river water-area time series
 
 ## What’s happening (backend flow)
 
-1. **(Pipeline)** Create `server/data/processed/*.tif` (multi-band GeoTIFFs per scene).
-2. **(Timeseries)** Convert those rasters into `server/data/river_area_timeseries.csv`.
+1. **(Image processing)** Turn Sentinel‑2 SAFE scenes into compact GeoTIFFs:
+  - Input: `server/data/raw/SAFE/*.SAFE`
+  - `extract_bands.py`: stacks 10m JP2 bands **B02/B03/B04/B08** into one GeoTIFF per scene → `server/data/extracted/*.tif`
+  - `crop_river.py`: builds a river corridor mask using NDWI (quick water mask) + buffer, then crops → `server/data/processed/*.tif`
+2. **(Timeseries)** Convert `server/data/processed/*.tif` into `server/data/river_area_timeseries.csv`.
 3. **(API)** Go server reads the CSV and returns JSON with `% change` + anomaly flags.
 
 ---
@@ -88,7 +91,9 @@ Backend env vars:
 - `server/app/main.go`: Go API (`/healthz`, `/api/timeseries`)
 - `server/app/pipeline/`: Python pipeline utilities
 - `server/data/river_area_timeseries.csv`: API source-of-truth CSV
-- `server/data/processed/`: processed per-scene GeoTIFFs (input to CSV generation)
+- `server/data/raw/SAFE/`: Sentinel‑2 SAFE inputs
+- `server/data/extracted/`: stacked per-scene GeoTIFFs (B02/B03/B04/B08)
+- `server/data/processed/`: cropped per-scene GeoTIFFs (input to CSV generation)
 - `frontend/`: Next.js dashboard (consumes the Go API; Next.js API is intentionally disabled)
 
 ---
