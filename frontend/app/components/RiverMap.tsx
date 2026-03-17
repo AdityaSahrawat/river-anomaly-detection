@@ -61,23 +61,8 @@ function approxLineLengthKm(geom: any): number {
   return 0;
 }
 
-function pickMainRiverFeatureCollection(fc: any): any {
-  // HydroRIVERS is dense. To make the map immediately interpretable,
-  // keep only the longest line feature as a proxy for the "main" stem.
-  if (!fc || fc.type !== "FeatureCollection" || !Array.isArray(fc.features)) return fc;
-
-  let best: any | null = null;
-  let bestLen = 0;
-  for (const f of fc.features) {
-    const len = approxLineLengthKm(f?.geometry);
-    if (len > bestLen) {
-      bestLen = len;
-      best = f;
-    }
-  }
-  if (!best) return { ...fc, features: [] };
-  return { ...fc, features: [best] };
-}
+// NOTE: We generate river.geojson as a pre-filtered mainstem path.
+// The frontend should render it as-is (no additional heuristics).
 
 function getEnvNumber(name: string, fallback: number): number {
   const raw = process.env[name];
@@ -110,7 +95,7 @@ export default function RiverMap({rows, selectedDate}: Props) {
         const res = await fetch(riverGeojsonUrl, {cache: "no-store"});
         if (!res.ok) return;
         const json = await res.json();
-        if (!cancelled) setGeojson(pickMainRiverFeatureCollection(json));
+        if (!cancelled) setGeojson(json);
       } catch {
         // optional file
       }
@@ -175,14 +160,14 @@ export default function RiverMap({rows, selectedDate}: Props) {
 
       <div className="pointer-events-none absolute left-3 top-3 rounded-md border border-black/10 bg-white/80 px-3 py-2 text-xs text-zinc-800 backdrop-blur dark:border-white/10 dark:bg-black/60 dark:text-zinc-100">
         <div className="font-medium">River Anomaly Detection</div>
-        <div className="text-zinc-600 dark:text-zinc-300">
+        <div className="text-zinc-800 dark:text-zinc-200">
           Latest:{" "}
           {latest && latestTs
             ? `${latestTs.primary} · ${latestTs.secondary} (${latest.water_area_m2.toFixed(0)} m²)`
             : "—"}
         </div>
         {selected ? (
-          <div className="text-zinc-600 dark:text-zinc-300">
+          <div className="text-zinc-800 dark:text-zinc-200">
             Selected:{" "}
             {selectedTs
               ? `${selectedTs.primary} · ${selectedTs.secondary} (${selected.water_area_m2.toFixed(0)} m²)`
@@ -190,7 +175,7 @@ export default function RiverMap({rows, selectedDate}: Props) {
           </div>
         ) : null}
         {!geojson && riverGeojsonUrl ? (
-          <div className="text-zinc-600 dark:text-zinc-300">
+          <div className="text-zinc-800 dark:text-zinc-200">
             River geometry not loaded (check NEXT_PUBLIC_RIVER_GEOJSON_URL).
           </div>
         ) : null}

@@ -91,7 +91,7 @@ function Sparkline({values}: {values: number[]}) {
 
   if (values.length < 2) {
     return (
-      <div className="text-xs text-zinc-600 dark:text-zinc-300">Not enough data</div>
+      <div className="text-xs text-zinc-800 dark:text-zinc-200">Not enough data</div>
     );
   }
 
@@ -117,9 +117,11 @@ function Sparkline({values}: {values: number[]}) {
       <polyline
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         points={pts}
-        className="text-zinc-900 dark:text-zinc-100"
+        className="text-zinc-950 dark:text-zinc-100"
       />
     </svg>
   );
@@ -185,13 +187,13 @@ export default function RiverDashboard() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <div className="text-base font-semibold">River Dashboard</div>
-            <div className="text-xs text-zinc-700 dark:text-zinc-300">
+            <div className="text-xs text-zinc-800 dark:text-zinc-200">
               NDWI time series + simple anomaly flags
             </div>
           </div>
-          <div className="text-right text-xs text-zinc-700 dark:text-zinc-300">
+          <div className="text-right text-xs text-zinc-800 dark:text-zinc-200">
             <div>Threshold: pct_change &lt; {pctDrop}</div>
-            <div className="truncate max-w-[60ch] text-zinc-600 dark:text-zinc-300">
+            <div className="truncate max-w-[60ch] text-zinc-700 dark:text-zinc-300">
               {source ? `Source: ${source}` : ""}
             </div>
           </div>
@@ -203,25 +205,25 @@ export default function RiverDashboard() {
           <RiverMap rows={rows} selectedDate={selectedDate} />
         </section>
 
-        <aside className="w-90 border-l border-black/10 p-4 dark:border-white/10">
+        <aside className="w-90 border-l border-black/10 bg-white/95 p-4 text-zinc-950 dark:border-white/10 dark:bg-black/40 dark:text-zinc-50">
           {loading ? (
-            <div className="text-sm text-zinc-700 dark:text-zinc-300">Loading…</div>
+            <div className="text-sm text-zinc-800 dark:text-zinc-200">Loading…</div>
           ) : error ? (
             <div className="text-sm text-red-600 dark:text-red-400">
               {error}
             </div>
           ) : (
             <div className="flex h-full flex-col">
-              <div className="rounded-md border border-black/10 p-3 dark:border-white/10">
+              <div className="rounded-md border border-black/10 bg-white/80 p-3 dark:border-white/10 dark:bg-black/20">
                 <div className="text-sm font-medium">Summary</div>
-                <div className="mt-1 grid grid-cols-2 gap-2 text-xs text-zinc-700 dark:text-zinc-300">
+                <div className="mt-1 grid grid-cols-2 gap-2 text-xs text-zinc-800 dark:text-zinc-200">
                   <div>
                     <div className="font-medium text-zinc-900 dark:text-zinc-100">
                       {latest ? formatArea(latest.water_area_m2) : "—"}
                     </div>
-                    <div className="text-zinc-600 dark:text-zinc-300">Latest</div>
+                    <div className="text-zinc-900/80 dark:text-zinc-200">Latest</div>
                     {latestTs ? (
-                      <div className="text-[11px] text-zinc-600 dark:text-zinc-400">
+                      <div className="text-[11px] text-zinc-900/70 dark:text-zinc-200">
                         {latestTs.primary} · {latestTs.secondary}
                       </div>
                     ) : null}
@@ -230,19 +232,19 @@ export default function RiverDashboard() {
                     <div className="font-medium text-zinc-900 dark:text-zinc-100">
                       {anomalies.length}
                     </div>
-                    <div className="text-zinc-600 dark:text-zinc-300">Anomalies</div>
+                    <div className="text-zinc-900/80 dark:text-zinc-200">Anomalies</div>
                   </div>
                   <div>
                     <div className="font-medium text-zinc-900 dark:text-zinc-100">
                       {minArea === null ? "—" : formatArea(minArea)}
                     </div>
-                    <div className="text-zinc-600 dark:text-zinc-300">Min</div>
+                    <div className="text-zinc-900/80 dark:text-zinc-200">Min</div>
                   </div>
                   <div>
                     <div className="font-medium text-zinc-900 dark:text-zinc-100">
                       {maxArea === null ? "—" : formatArea(maxArea)}
                     </div>
-                    <div className="text-zinc-600 dark:text-zinc-300">Max</div>
+                    <div className="text-zinc-900/80 dark:text-zinc-200">Max</div>
                   </div>
                 </div>
 
@@ -250,21 +252,21 @@ export default function RiverDashboard() {
                   <Sparkline values={areas} />
                 </div>
 
-                <div className="mt-2 text-xs text-zinc-700 dark:text-zinc-300">
+                <div className="mt-2 text-xs text-zinc-900/80 dark:text-zinc-200">
                   Threshold: pct_change &lt; {pctDrop}
                 </div>
               </div>
 
               <div className="mt-4">
                 <div className="text-sm font-medium">Anomalies</div>
-                <div className="text-xs text-zinc-700 dark:text-zinc-300">
+                <div className="text-xs text-zinc-900/80 dark:text-zinc-200">
                   {anomalies.length} flagged out of {rows.length}
                 </div>
               </div>
 
-              <div className="mt-3 flex-1 overflow-auto rounded-md border border-black/10 dark:border-white/10">
+              <div className="mt-3 flex-1 overflow-auto rounded-md border border-black/10 bg-white/70 dark:border-white/10 dark:bg-black/20">
                 {anomalies.length === 0 ? (
-                  <div className="p-3 text-sm text-zinc-700 dark:text-zinc-300">
+                  <div className="p-3 text-sm text-zinc-800 dark:text-zinc-200">
                     No anomalies found.
                   </div>
                 ) : (
@@ -291,11 +293,11 @@ export default function RiverDashboard() {
                         >
                           <div className="flex items-baseline justify-between gap-3">
                             <div className="font-medium">{ts.primary}</div>
-                            <div className="text-[11px] text-zinc-600 dark:text-zinc-400">
+                            <div className="text-[11px] text-zinc-900/70 dark:text-zinc-200">
                               {ts.secondary}
                             </div>
                           </div>
-                          <div className="text-xs text-zinc-700 dark:text-zinc-300">
+                          <div className="text-xs text-zinc-900/90 dark:text-zinc-200">
                             area: {formatArea(a.water_area_m2)} · pct_change:{" "}
                             <span
                               className={
@@ -316,7 +318,7 @@ export default function RiverDashboard() {
                 )}
               </div>
 
-              <div className="mt-3 text-xs text-zinc-600 dark:text-zinc-300">
+              <div className="mt-3 text-xs text-zinc-900/70 dark:text-zinc-200">
                 {riverGeojsonUrl ? (
                   <>River overlay: <span className="font-medium">{riverGeojsonUrl}</span></>
                 ) : (
